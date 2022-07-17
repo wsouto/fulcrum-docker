@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  fulcrum:
+    image: waltersouto/fulcrum:${TAG}@sha256:2ae66518f791fa0eee8c3b80d849204db623a2842c820e21d4cdefff056a459c
+    restart: "no"
+    ports:
+      - "${HOST_PORT}:50002"
+    volumes:
+      - "${HOST_BTC_DIR}:/data/.bitcoin:ro"
+      - "${HOST_DATA_DIR}:/data"
