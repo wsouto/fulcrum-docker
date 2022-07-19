@@ -1,29 +1,49 @@
+diff --git a/contrib/base.sh b/contrib/base.sh
+index c2d88ce..15f1666 100644
+--- a/contrib/base.sh
++++ b/contrib/base.sh
+@@ -2,18 +2,20 @@
+ 
+ set -e
+ 
+-if [ -z "$CPU_COUNT" ] ; then
+-    # CPU_COUNT is not set, try to detect the core count
+-    case $(uname) in
+-        Linux)
+-            export CPU_COUNT=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
+-            ;;
+-        Darwin)
+-            export CPU_COUNT=$(sysctl -n hw.ncpu)
+-            ;;
+-    esac
+-fi
++# if [ -z "$CPU_COUNT" ] ; then
++#     # CPU_COUNT is not set, try to detect the core count
++#     case $(uname) in
++#         Linux)
++#             export CPU_COUNT=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
++#             ;;
++#         Darwin)
++#             export CPU_COUNT=$(sysctl -n hw.ncpu)
++#             ;;
++#     esac
++# fi
++
+ # If CPU_COUNT is still unset, default to 4
+ export CPU_COUNT="${CPU_COUNT:-4}"
++
+ # Use one more worker than core count
+ export WORKER_COUNT=$(($CPU_COUNT+1))
 diff --git a/contrib/docker/Dockerfile b/contrib/docker/Dockerfile
-index 7b03573..aa5c529 100644
+index 7b03573..9c460de 100644
 --- a/contrib/docker/Dockerfile
 +++ b/contrib/docker/Dockerfile
-@@ -1,4 +1,4 @@
--FROM debian:bullseye as builder
-+FROM debian:bullseye-slim as builder
- 
- LABEL maintainer="Axel Gembe <derago@gmail.com>"
- 
 @@ -34,4 +34,4 @@ EXPOSE 50001 50002
  COPY contrib/docker/docker-entrypoint.sh /entrypoint.sh
  ENTRYPOINT ["/entrypoint.sh"]
  
 -CMD ["Fulcrum"]
 +CMD ["Fulcrum", "/data/fulcrum.conf"]
-diff --git a/contrib/docker/build.sh b/contrib/docker/build.sh
-index ec82ed2..82e4a3c 100755
---- a/contrib/docker/build.sh
-+++ b/contrib/docker/build.sh
-@@ -13,4 +13,4 @@ here=$(dirname $(realpath "$0" 2> /dev/null || grealpath "$0"))
- . "$here"/../base.sh
- 
- docker buildx build --build-arg MAKEFLAGS="-j $WORKER_COUNT" -t "$IMAGE_TAG" -f contrib/docker/Dockerfile \
--    --platform linux/arm64/v8,linux/amd64 --push "$here"/../..
-+    --platform linux/amd64 --load "$here"/../..
 diff --git a/contrib/docker/docker-entrypoint.sh b/contrib/docker/docker-entrypoint.sh
 index 2fcbbd3..4af64bc 100755
 --- a/contrib/docker/docker-entrypoint.sh
