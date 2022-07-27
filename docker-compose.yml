@@ -2,10 +2,12 @@ version: "3"
 
 services:
   fulcrum:
-    image: waltersouto/fulcrum:${TAG}@sha256:9e20ac0790c71a597a231bb0e1e321de1cd2e92efc4fb8db43833f1ac271d937
+    image: waltersouto/fulcrum:${TAG}@sha256:56475ceed7e8c332d5b4a7ab93c9fe6fe70c17ed074653f055247b1779dd4de5
     restart: "no"
     ports:
       - "${HOST_PORT}:50002"
     volumes:
       - "${HOST_BTC_DIR}:/data/.bitcoin:ro"
       - "${HOST_DATA_DIR}:/data"
+    command:
+      ["Fulcrum", "/data/fulcrum.conf"]
