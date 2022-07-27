@@ -33,7 +33,7 @@ git checkout 549cd23cd3a4346455f5113ef7e1d3e86599c51e
 ```
 - Build the images (read the note above if you did not!). It may take a while:
 ```
-docker buildx build --build-arg MAKEFLAGS="-j $(nproc)" -t <your-docker-repo>/fulcrum:v1.7.0 -f contrib/docker/Dockerfile --platform linux/arm64/v8,linux/amd64 --push .
+docker buildx build --build-arg MAKEFLAGS="-j $(nproc)" -t <your-docker-hub-user>/fulcrum:v1.7.0 -f contrib/docker/Dockerfile --platform linux/arm64/v8,linux/amd64 --push .
 ```
 - Edit the `docker-compose.yml` to use your image from the Docker Hub.
 - Do step **1** from here.
